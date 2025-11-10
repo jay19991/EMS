@@ -37,10 +37,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
       if (stored && stored.email === email && stored.pass === pass) {
         loginSuccess.classList.remove('d-none');
+  // Restrict access for EMS Sites
         if (passphrase === 'Unihvac123') {
           localStorage.setItem('emsAccess', 'full');
           setTimeout(() => window.location.href = 'ems-sites.html', 1500);
-        } else {
+        } 
+  // Restrict access for Portfolio
+		else if (passphrase === 'Unihvac@123') {
+          localStorage.setItem('emsAccess', 'full');
+          setTimeout(() => window.location.href = 'https://jay19991.github.io/portfolio/', 1500);
+        }
+		else {
           localStorage.setItem('emsAccess', 'limited');
           setTimeout(() => window.location.href = 'ems-sites1.html', 1500);
         }
@@ -49,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     });
   }
-
+		
   // Restrict access
   const path = window.location.pathname;
   if (path.includes('ems-sites.html') || path.includes('ems-sites1.html')) {
@@ -64,3 +71,5 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 });
+
+ 
