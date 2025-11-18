@@ -1,5 +1,5 @@
+// Contact Form Thank You
 document.addEventListener('DOMContentLoaded', function () {
-  // Contact Form Thank You
   const contactForm = document.getElementById('contactForm');
   const thankYou = document.getElementById('thankYouMessage');
   if (contactForm) {
@@ -10,68 +10,51 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  // Registration
-  const registerForm = document.getElementById('registerForm');
-  const registerSuccess = document.getElementById('registerSuccess');
-  if (registerForm) {
-    registerForm.addEventListener('submit', e => {
-      e.preventDefault();
-      const email = document.getElementById('regEmail').value;
-      const pass = document.getElementById('regPassword').value;
-      localStorage.setItem('emsUser', JSON.stringify({ email, pass }));
-      registerSuccess.classList.remove('d-none');
-      registerForm.reset();
-    });
-  }
+// Registration
+const registerForm = document.getElementById('registerForm');
+const registerSuccess = document.getElementById('registerSuccess');
+if(registerForm){
+  registerForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const formData = new FormData(registerForm);
+    formData.append('action', 'register');
 
-  // Login
-  const loginForm = document.getElementById('loginForm');
-  const loginSuccess = document.getElementById('loginSuccess');
-  if (loginForm) {
-    loginForm.addEventListener('submit', e => {
-      e.preventDefault();
-      const stored = JSON.parse(localStorage.getItem('emsUser'));
-      const email = document.getElementById('loginEmail').value;
-      const pass = document.getElementById('loginPassword').value;
-      const passphrase = document.getElementById('loginPassphrase').value.trim();
-
-      if (stored && stored.email === email && stored.pass === pass) {
-        loginSuccess.classList.remove('d-none');
-  // Restrict access for EMS Sites
-        if (passphrase === 'Unihvac123') {
-          localStorage.setItem('emsAccess', 'full');
-          setTimeout(() => window.location.href = 'ems-sites.html', 1500);
-        } 
-  // Restrict access for Portfolio
-		else if (passphrase === 'Unihvac@123') {
-          localStorage.setItem('emsAccess', 'full');
-          setTimeout(() => window.location.href = 'https://jay19991.github.io/portfolio/', 1500);
-        }
-		else {
-          localStorage.setItem('emsAccess', 'limited');
-          setTimeout(() => window.location.href = 'ems-sites1.html', 1500);
-        }
+    fetch('login.php', {method:'POST', body:formData})
+    .then(res=>res.json())
+    .then(data=>{
+      if(data.status==='success'){
+        registerSuccess.classList.remove('d-none');
+        registerForm.reset();
       } else {
-        alert('Invalid credentials or please register first.');
+        alert(data.message);
       }
     });
-  }
-		
-  // Restrict access
-  const path = window.location.pathname;
-  if (path.includes('ems-sites.html') || path.includes('ems-sites1.html')) {
-    const access = localStorage.getItem('emsAccess');
-    if (!access) {
-      alert('Please log in to access this page.');
-      window.location.href = 'login.html';
-    }
-    if (path.includes('ems-sites.html') && access !== 'full') {
-      alert('You do not have permission to view this page.');
-      window.location.href = 'ems-sites1.html';
-    }
-  }
-});
+  });
+}
 
+// Login
+const loginForm = document.getElementById('loginForm');
+const loginSuccess = document.getElementById('loginSuccess');
+if(loginForm){
+  loginForm.addEventListener('submit', e=>{
+    e.preventDefault();
+    const formData = new FormData(loginForm);
+    formData.append('action','login');
+
+    fetch('login.php', {method:'POST', body:formData})
+    .then(res=>res.json())
+    .then(data=>{
+      if(data.status==='success'){
+        loginSuccess.classList.remove('d-none');
+        setTimeout(()=>window.location.href = data.redirect, 1500);
+      } else {
+        alert(data.message);
+      }
+    });
+  });
+}
+
+}
 //Procedure Page
 //BAS Step by Step Procedures 
 const stepDetails = {
