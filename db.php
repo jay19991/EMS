@@ -1,14 +1,20 @@
 <?php
-$servername = "localhost";
-$username = "root";  // Default WAMP MySQL username
-$password = "";      // Default WAMP MySQL password (blank by default)
-$dbname = "ems";     // Name of the database we created earlier
+$host = 'localhost';
+$db   = 'ems'; // your database name
+$user = 'root'; // your WAMP default user
+$pass = '';     // your WAMP default password (empty string by default)
+$charset = 'utf8mb4';
 
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
+$dsn = "mysql:host=$host;dbname=$db;charset=$charset";
 
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+$options = [
+    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION, 
+    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+    PDO::ATTR_EMULATE_PREPARES   => false,
+];
+
+try {
+    $conn = new PDO($dsn, $user, $pass, $options);
+} catch (PDOException $e) {
+    die("Database connection failed: " . $e->getMessage());
 }
-?>
